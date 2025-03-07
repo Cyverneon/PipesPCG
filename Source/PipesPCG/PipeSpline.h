@@ -15,6 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	APipeSpline();
 
+	USceneComponent* SceneComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Spline")
 	USplineComponent* Spline;
 

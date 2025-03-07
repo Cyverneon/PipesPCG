@@ -6,11 +6,11 @@ APipeSpline::APipeSpline()
 	PrimaryActorTick.bCanEverTick = false;
 	bRunConstructionScriptOnDrag = true;
 
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	RootComponent = SceneComponent;
+
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
-	if (Spline)
-	{
-		RootComponent = Spline;
-	}
+	Spline->SetupAttachment(RootComponent);
 }
 
 void APipeSpline::OnConstruction(const FTransform& Transform)

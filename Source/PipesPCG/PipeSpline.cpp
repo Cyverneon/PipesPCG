@@ -4,13 +4,23 @@
 APipeSpline::APipeSpline()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	bRunConstructionScriptOnDrag = true;
 
+	// create scene component and spline
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	RootComponent = SceneComponent;
 
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 	Spline->SetupAttachment(RootComponent);
+
+	// load default meshes
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultPipeMesh(TEXT("/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder"));
+	PipeMesh = DefaultPipeMesh.Object;
+
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultRingMesh(TEXT("/Game/Meshes/Pipe2.Pipe2"));
+	RingMesh = DefaultRingMesh.Object;
+
+	// set correct default forward axis for the default mesh
+	ForwardAxis = ESplineMeshAxis::Z;
 }
 
 void APipeSpline::OnConstruction(const FTransform& Transform)
@@ -27,10 +37,10 @@ void APipeSpline::OnConstruction(const FTransform& Transform)
 
 		SplineMeshComponent->SetForwardAxis(ForwardAxis, true);
 
-		FVector StartPos = Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local);
-		FVector StartTangent = Spline->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Type::Local);
-		FVector EndPos = Spline->GetLocationAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local);
-		FVector EndTangent = Spline->GetTangentAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local);
+		const FVector StartPos = Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local);
+		const FVector StartTangent = Spline->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Type::Local);
+		const FVector EndPos = Spline->GetLocationAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local);
+		const FVector EndTangent = Spline->GetTangentAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local);
 		SplineMeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true);
 	}
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints(); i++)
@@ -42,6 +52,6 @@ void APipeSpline::OnConstruction(const FTransform& Transform)
 		MeshComponent->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
 		MeshComponent->SetRelativeLocation(Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local));
 		MeshComponent->SetRelativeRotation(UKismetMathLibrary::MakeRotFromX(Spline->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Type::Local)));
-		MeshComponent->SetStaticMesh(CubeMesh);
+		MeshComponent->SetStaticMesh(RingMesh);
 	}
 }

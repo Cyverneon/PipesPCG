@@ -14,22 +14,22 @@ class PIPESPCG_API APipeSpline : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	APipeSpline();
 
+	UPROPERTY(VisibleAnywhere)
 	USceneComponent* SceneComponent;
-
 	UPROPERTY(VisibleAnywhere, Category = "PipeSpline")
 	USplineComponent* Spline;
 
+	/* Mesh used for the pipe body */
 	UPROPERTY(EditAnywhere, Category = "PipeSpline")
 	UStaticMesh* PipeMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PipeSpline")
-	UStaticMesh* CubeMesh;
-
-	UPROPERTY(EditAnywhere)
+	/* Mesh used for the decorative rings around the pipe at each spline point */
+	UPROPERTY(EditAnywhere, Category = "PipeSpline")
+	UStaticMesh* RingMesh;
+	/* Forward axis for the pipe mesh */
+	UPROPERTY(EditAnywhere, Category = "PipeSpline")
 	TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
 
-	void OnConstruction(const FTransform& Transform) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 };

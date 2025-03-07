@@ -22,21 +22,26 @@ void APipeSpline::OnConstruction(const FTransform& Transform)
 		SplineMeshComponent->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 		SplineMeshComponent->RegisterComponentWithWorld(GetWorld());
 		SplineMeshComponent->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
+
+		SplineMeshComponent->SetStaticMesh(PipeMesh);
+
+		SplineMeshComponent->SetForwardAxis(ForwardAxis, true);
+
 		FVector StartPos = Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local);
 		FVector StartTangent = Spline->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Type::Local);
 		FVector EndPos = Spline->GetLocationAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local);
 		FVector EndTangent = Spline->GetTangentAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local);
-		SplineMeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent);
-		SplineMeshComponent->SetStaticMesh(PipeMesh);
+		SplineMeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true);
 	}
-	//for (int i = 0; i < Spline->GetNumberOfSplinePoints(); i++)
-	//{
-	//	UStaticMeshComponent* MeshComponent = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass());
-	//	MeshComponent->SetMobility(EComponentMobility::Movable);
-	//	MeshComponent->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-	//	MeshComponent->RegisterComponentWithWorld(GetWorld());
-	//	MeshComponent->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
-	//	MeshComponent->SetRelativeLocation(Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local));
-	//	MeshComponent->SetStaticMesh(CubeMesh);
-	//}
+	for (int i = 0; i < Spline->GetNumberOfSplinePoints(); i++)
+	{
+		UStaticMeshComponent* MeshComponent = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass());
+		MeshComponent->SetMobility(EComponentMobility::Movable);
+		MeshComponent->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+		MeshComponent->RegisterComponentWithWorld(GetWorld());
+		MeshComponent->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
+		MeshComponent->SetRelativeLocation(Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local));
+		MeshComponent->SetRelativeRotation(UKismetMathLibrary::MakeRotFromX(Spline->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Type::Local)));
+		MeshComponent->SetStaticMesh(CubeMesh);
+	}
 }

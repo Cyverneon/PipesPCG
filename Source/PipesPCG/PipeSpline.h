@@ -5,6 +5,7 @@
 #include "Components/SplineComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include <Kismet/KismetMathLibrary.h>
 #include "PipeSpline.generated.h"
 
 UCLASS()
@@ -26,6 +27,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PipeSpline")
 	UStaticMesh* CubeMesh;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
 
 	void OnConstruction(const FTransform& Transform) override;
 };

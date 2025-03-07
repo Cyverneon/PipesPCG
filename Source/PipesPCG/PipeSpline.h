@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/SplineComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SplineMeshComponent.h"
 #include "PipeSpline.generated.h"
 
 UCLASS()
@@ -17,10 +18,13 @@ public:
 
 	USceneComponent* SceneComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Spline")
+	UPROPERTY(VisibleAnywhere, Category = "PipeSpline")
 	USplineComponent* Spline;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
+	UPROPERTY(EditAnywhere, Category = "PipeSpline")
+	UStaticMesh* PipeMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PipeSpline")
 	UStaticMesh* CubeMesh;
 
 	void OnConstruction(const FTransform& Transform) override;

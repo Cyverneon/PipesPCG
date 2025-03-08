@@ -24,12 +24,20 @@ public:
 	/* Mesh used for the pipe body */
 	UPROPERTY(EditAnywhere, Category = "PipeSpline")
 	UStaticMesh* PipeMesh;
+	
 	/* Mesh used for the decorative rings around the pipe at each spline point */
 	UPROPERTY(EditAnywhere, Category = "PipeSpline")
 	UStaticMesh* RingMesh;
+	
 	/* Forward axis for the pipe mesh */
 	UPROPERTY(EditAnywhere, Category = "PipeSpline")
 	TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+private:
+	void InitializeProperties();
+	void SetUpMesh(UPrimitiveComponent* Component) const;
+	void SpawnSplineMeshes();
+	void SpawnStaticMeshes();
 };

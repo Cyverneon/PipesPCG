@@ -4,7 +4,11 @@
 APipeSpline::APipeSpline()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	InitializeProperties();
+}
 
+void APipeSpline::InitializeProperties()
+{
 	// create scene component and spline
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	RootComponent = SceneComponent;
@@ -23,35 +27,49 @@ APipeSpline::APipeSpline()
 	ForwardAxis = ESplineMeshAxis::Z;
 }
 
-void APipeSpline::OnConstruction(const FTransform& Transform)
+void APipeSpline::SetUpMesh(UPrimitiveComponent* Component) const
+{
+	Component->SetMobility(EComponentMobility::Movable);
+    Component->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+    Component->RegisterComponentWithWorld(GetWorld());
+    Component->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+void APipeSpline::SpawnSplineMeshes()
 {
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints()-1; i++)
 	{
 		USplineMeshComponent* SplineMeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-		SplineMeshComponent->SetMobility(EComponentMobility::Movable);
-		SplineMeshComponent->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-		SplineMeshComponent->RegisterComponentWithWorld(GetWorld());
-		SplineMeshComponent->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
+		
+		SetUpMesh(SplineMeshComponent);
 
 		SplineMeshComponent->SetStaticMesh(PipeMesh);
 
 		SplineMeshComponent->SetForwardAxis(ForwardAxis, true);
-
-		const FVector StartPos = Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local);
-		const FVector StartTangent = Spline->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Type::Local);
-		const FVector EndPos = Spline->GetLocationAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local);
-		const FVector EndTangent = Spline->GetTangentAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local);
-		SplineMeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true);
+		
+		SplineMeshComponent->SetStartAndEnd(
+			Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local),
+			Spline->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Type::Local),
+			Spline->GetLocationAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local),
+			Spline->GetTangentAtSplinePoint(i+1, ESplineCoordinateSpace::Type::Local),
+			true);
 	}
+}
+
+void APipeSpline::SpawnStaticMeshes()
+{
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints(); i++)
 	{
 		UStaticMeshComponent* MeshComponent = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass());
-		MeshComponent->SetMobility(EComponentMobility::Movable);
-		MeshComponent->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-		MeshComponent->RegisterComponentWithWorld(GetWorld());
-		MeshComponent->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
+		SetUpMesh(MeshComponent);
 		MeshComponent->SetRelativeLocation(Spline->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Type::Local));
 		MeshComponent->SetRelativeRotation(UKismetMathLibrary::MakeRotFromX(Spline->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Type::Local)));
 		MeshComponent->SetStaticMesh(RingMesh);
 	}
+}
+
+void APipeSpline::OnConstruction(const FTransform& Transform)
+{
+	SpawnSplineMeshes();
+	SpawnStaticMeshes();
 }

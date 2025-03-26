@@ -20,12 +20,15 @@ void APipeSpline::InitializeProperties()
 	const ConstructorHelpers::FObjectFinder<UMaterial> DefaultPipeMaterial(TEXT("/Script/Engine.Material'/Game/StarterContent/Materials/M_Metal_Burnished_Steel.M_Metal_Burnished_Steel'"));
 	PipeMaterial = DefaultPipeMaterial.Object;
 
+	const ConstructorHelpers::FObjectFinder<UMaterial> DefaultBraceMaterial(TEXT("/Script/Engine.Material'/Game/StarterContent/Materials/M_Metal_Steel.M_Metal_Steel'"));
+	BraceMaterial = DefaultBraceMaterial.Object;
+
 	// load default meshes
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultPipeMesh(TEXT("/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder"));
 	PipeMesh = DefaultPipeMesh.Object;
 
-	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultRingMesh(TEXT("/Game/Meshes/PipeBrace.PipeBrace"));
-	RingMesh = DefaultRingMesh.Object;
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultBraceMesh(TEXT("/Game/Meshes/PipeBrace.PipeBrace"));
+	BraceMesh = DefaultBraceMesh.Object;
 
 	// set correct default forward axis for the default mesh
 	ForwardAxis = ESplineMeshAxis::Z;
@@ -84,7 +87,11 @@ void APipeSpline::CreateBrace(FVector Location, FVector Tangent)
 	SetUpMesh(MeshComponent);
 	MeshComponent->SetRelativeLocation(Location);
 	MeshComponent->SetRelativeRotation(UKismetMathLibrary::MakeRotFromX(Tangent));
-	MeshComponent->SetStaticMesh(RingMesh);
+	MeshComponent->SetStaticMesh(BraceMesh);
+	if (BraceMaterial)
+	{
+		MeshComponent->SetMaterial(0, BraceMaterial);
+	}
 }
 
 void APipeSpline::SpawnStaticMeshes()

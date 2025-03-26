@@ -27,7 +27,7 @@ public:
 	
 	/* Mesh used for the decorative rings around the pipe at each spline point */
 	UPROPERTY(EditAnywhere, Category = "PipeSpline")
-	UStaticMesh* RingMesh;
+	UStaticMesh* BraceMesh;
 	
 	/* Forward axis for the pipe mesh */
 	UPROPERTY(EditAnywhere, Category = "PipeSpline")
@@ -41,6 +41,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "PipeSpline")
 	UMaterial* PipeMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "PipeSpline")
+	UMaterial* BraceMaterial;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 

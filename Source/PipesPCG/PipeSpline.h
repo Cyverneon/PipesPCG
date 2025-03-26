@@ -33,11 +33,22 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PipeSpline")
 	TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
 
+	UPROPERTY(EditAnywhere, Category = "PipeSpline")
+	int BraceFrequency;
+
+	UPROPERTY(EditAnywhere, Category = "PipeSpline")
+	bool CapEnds;
+
+	UPROPERTY(EditAnywhere, Category = "PipeSpline")
+	UMaterial* PipeMaterial;
+
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 private:
 	void InitializeProperties();
 	void SetUpMesh(UPrimitiveComponent* Component) const;
+	void CreateBrace(FVector Location, FVector Tangent);
+	void AlignSplineToGrid();
 	void SpawnSplineMeshes();
 	void SpawnStaticMeshes();
 };

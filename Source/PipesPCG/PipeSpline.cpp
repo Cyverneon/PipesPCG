@@ -24,7 +24,7 @@ void APipeSpline::InitializeProperties()
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultPipeMesh(TEXT("/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder"));
 	PipeMesh = DefaultPipeMesh.Object;
 
-	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultRingMesh(TEXT("/Game/Meshes/Pipe2.Pipe2"));
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultRingMesh(TEXT("/Game/Meshes/PipeBrace.PipeBrace"));
 	RingMesh = DefaultRingMesh.Object;
 
 	// set correct default forward axis for the default mesh

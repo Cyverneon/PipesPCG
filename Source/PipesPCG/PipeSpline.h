@@ -51,7 +51,7 @@ private:
 	void InitializeProperties();
 	void SetUpMesh(UPrimitiveComponent* Component) const;
 	void CreateBrace(FVector Location, FVector Tangent);
-	void AlignSplineToGrid();
+	void AlignSplineToGrid(int GridSize);
 	void SpawnSplineMeshes();
 	void SpawnStaticMeshes();
 };

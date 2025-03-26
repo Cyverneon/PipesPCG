@@ -42,7 +42,7 @@ void APipeSpline::SetUpMesh(UPrimitiveComponent* Component) const
 	Component->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-void APipeSpline::AlignSplineToGrid()
+void APipeSpline::AlignSplineToGrid(int GridSize)
 {
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints() - 1; i++)
 	{
@@ -50,6 +50,9 @@ void APipeSpline::AlignSplineToGrid()
 		OriginalPointPos.X = UKismetMathLibrary::Round(OriginalPointPos.X);
 		OriginalPointPos.Y = UKismetMathLibrary::Round(OriginalPointPos.Y);
 		OriginalPointPos.Z = UKismetMathLibrary::Round(OriginalPointPos.Z);
+		OriginalPointPos.X = OriginalPointPos.X - ((int)OriginalPointPos.X % GridSize);
+		OriginalPointPos.Y = OriginalPointPos.Y - ((int)OriginalPointPos.Y % GridSize);
+		OriginalPointPos.Z = OriginalPointPos.Z - ((int)OriginalPointPos.Z % GridSize);
 		Spline->SetLocationAtSplinePoint(i, OriginalPointPos, ESplineCoordinateSpace::Type::Local);
 	}
 }
@@ -124,7 +127,7 @@ void APipeSpline::SpawnStaticMeshes()
 
 void APipeSpline::OnConstruction(const FTransform& Transform)
 {
-	AlignSplineToGrid();
+	AlignSplineToGrid(100);
 	SpawnSplineMeshes();
 	SpawnStaticMeshes();
 }

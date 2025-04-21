@@ -127,7 +127,6 @@ void APipeSpline::SpawnStaticMeshes()
 
 void APipeSpline::OnConstruction(const FTransform& Transform)
 {
-	AlignSplineToGrid(100);
 	SpawnSplineMeshes();
 	SpawnStaticMeshes();
 }

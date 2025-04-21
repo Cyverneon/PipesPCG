@@ -20,12 +20,15 @@ void APipeSpline::InitializeProperties()
 	const ConstructorHelpers::FObjectFinder<UMaterial> DefaultPipeMaterial(TEXT("/Script/Engine.Material'/Game/StarterContent/Materials/M_Metal_Burnished_Steel.M_Metal_Burnished_Steel'"));
 	PipeMaterial = DefaultPipeMaterial.Object;
 
+	const ConstructorHelpers::FObjectFinder<UMaterial> DefaultBraceMaterial(TEXT("/Script/Engine.Material'/Game/StarterContent/Materials/M_Metal_Steel.M_Metal_Steel'"));
+	BraceMaterial = DefaultBraceMaterial.Object;
+
 	// load default meshes
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultPipeMesh(TEXT("/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder"));
 	PipeMesh = DefaultPipeMesh.Object;
 
-	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultRingMesh(TEXT("/Game/Meshes/Pipe2.Pipe2"));
-	RingMesh = DefaultRingMesh.Object;
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultBraceMesh(TEXT("/Game/Meshes/PipeBrace.PipeBrace"));
+	BraceMesh = DefaultBraceMesh.Object;
 
 	// set correct default forward axis for the default mesh
 	ForwardAxis = ESplineMeshAxis::Z;
@@ -39,7 +42,7 @@ void APipeSpline::SetUpMesh(UPrimitiveComponent* Component) const
 	Component->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-void APipeSpline::AlignSplineToGrid()
+void APipeSpline::AlignSplineToGrid(int GridSize)
 {
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints() - 1; i++)
 	{
@@ -47,6 +50,9 @@ void APipeSpline::AlignSplineToGrid()
 		OriginalPointPos.X = UKismetMathLibrary::Round(OriginalPointPos.X);
 		OriginalPointPos.Y = UKismetMathLibrary::Round(OriginalPointPos.Y);
 		OriginalPointPos.Z = UKismetMathLibrary::Round(OriginalPointPos.Z);
+		OriginalPointPos.X = OriginalPointPos.X - ((int)OriginalPointPos.X % GridSize);
+		OriginalPointPos.Y = OriginalPointPos.Y - ((int)OriginalPointPos.Y % GridSize);
+		OriginalPointPos.Z = OriginalPointPos.Z - ((int)OriginalPointPos.Z % GridSize);
 		Spline->SetLocationAtSplinePoint(i, OriginalPointPos, ESplineCoordinateSpace::Type::Local);
 	}
 }
@@ -84,7 +90,11 @@ void APipeSpline::CreateBrace(FVector Location, FVector Tangent)
 	SetUpMesh(MeshComponent);
 	MeshComponent->SetRelativeLocation(Location);
 	MeshComponent->SetRelativeRotation(UKismetMathLibrary::MakeRotFromX(Tangent));
-	MeshComponent->SetStaticMesh(RingMesh);
+	MeshComponent->SetStaticMesh(BraceMesh);
+	if (BraceMaterial)
+	{
+		MeshComponent->SetMaterial(0, BraceMaterial);
+	}
 }
 
 void APipeSpline::SpawnStaticMeshes()
@@ -117,7 +127,6 @@ void APipeSpline::SpawnStaticMeshes()
 
 void APipeSpline::OnConstruction(const FTransform& Transform)
 {
-	AlignSplineToGrid();
 	SpawnSplineMeshes();
 	SpawnStaticMeshes();
 }
